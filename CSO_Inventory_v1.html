@@ -1286,15 +1286,12 @@ tr.drow.ret-row>td{background:var(--lpurple)!important}
 
 <div class="toolbar">
   <div class="tb-row tb-row1">
-    <button class="btn btn-n btn-sm" onclick="showUpModal()">📂 <span class="tb-lbl">Veeqo CSV</span></button>
-    <button class="btn btn-o btn-sm" onclick="document.getElementById('inp-tracker').click()">📂 <span class="tb-lbl">Tracker XLSX</span></button>
+    <button class="btn btn-b btn-sm" onclick="openDataToolsModal()">🛠️ Data & Backup Tools</button>
+
+    <!-- Hidden inputs for file uploads -->
     <input type="file" id="inp-veeqo"   accept=".csv"       style="display:none" onchange="onVeeqoUpload(event)">
     <input type="file" id="inp-tracker" accept=".xlsx,.xls" style="display:none" onchange="onTrackerUpload(event)">
-    <button class="btn btn-g btn-sm" onclick="showExpModal()">💾 <span class="tb-lbl">Export</span></button>
-    <button class="btn btn-o btn-sm" onclick="doSaveBackup()">📋 <span class="tb-lbl">Save Backup</span></button>
-    <button class="btn btn-o btn-sm" onclick="document.getElementById('inp-json').click()">📂 <span class="tb-lbl">Load Backup</span></button>
     <input type="file" id="inp-json" accept=".json" style="display:none" onchange="loadJson(event)">
-    <button class="btn btn-sm" onclick="document.getElementById('inp-pm').click()" style="background:#7c3aed;color:#fff;border-color:#7c3aed;font-size:11px;padding:4px 8px">📋 Product Master</button>
     <input type="file" id="inp-pm" accept=".csv,.xlsx,.xls" style="display:none" onchange="onPMUpload(event)">
     <span class="tb-sep"></span>
     <button class="btn btn-sm" id="btn-undo" onclick="doUndo()" title="Undo" style="opacity:.4" disabled>↩ <span class="tb-lbl">Undo</span></button>
@@ -2416,8 +2413,8 @@ function mergeLocalStorage(){
 }
 
 async function init(){
-  try{ await loadBackupFileHandle(); }catch(e){}
   try { await initDB(); } catch(e) { console.warn("IndexedDB unavailable"); }
+  try{ await loadBackupFileHandle(); }catch(e){}
   try { await initDB(); } catch(e) { console.warn('IndexedDB unavailable', e); }
   if (typeof buildBottomNav === "function") buildBottomNav();
   injectPWA();
@@ -2645,6 +2642,7 @@ function lg(ico,msg,badge,bcls,prodId){
   if(curTab==='log')rLog();
   // Also write to per-product log if prodId given
   if(prodId!=null)lgProd(prodId,ico,msg);
+  saveLS();
 }
 function rLog(){
   const el=document.getElementById('log-list'),em=document.getElementById('log-empty');
@@ -3033,7 +3031,11 @@ function rRecon(){
     const dtd=document.createElement('td'); dtd.colSpan=13;
     const inner=document.createElement('div');
     inner.className='di'+(isOpen?' open':''); inner.id='di-recon-'+r.id;
-    if(isOpen)inner.innerHTML=bReconDetail(r,gs(r.id));
+    if(isOpen) {
+      inner.innerHTML=bReconDetail(r,gs(r.id));
+      const db = inner.querySelector('.db');
+      if (db) db.insertAdjacentHTML('afterbegin', `<button class="btn btn-n btn-sm" style="float:right;margin-bottom:8px" onclick="tRow('recon', ${r.id})">Collapse</button>`);
+    }
     dtd.appendChild(inner); dtr.appendChild(dtd); tbody.appendChild(dtr);
   });
   rPg('recon');
@@ -3306,7 +3308,11 @@ function rPick(){
     const dtd=document.createElement('td'); dtd.colSpan=10;
     const inner=document.createElement('div');
     inner.className='di'+(isOpen?' open':''); inner.id='di-pick-'+r.id;
-    if(isOpen)inner.innerHTML=bPickDetail(r,gs(r.id));
+    if(isOpen) {
+      inner.innerHTML=bPickDetail(r,gs(r.id));
+      const db = inner.querySelector('.db');
+      if (db) db.insertAdjacentHTML('afterbegin', `<button class="btn btn-n btn-sm" style="float:right;margin-bottom:8px" onclick="tRow('pick', ${r.id})">Collapse</button>`);
+    }
     dtd.appendChild(inner); dtr.appendChild(dtd); tbody.appendChild(dtr);
   });
   rPg('pick');
@@ -3339,8 +3345,8 @@ function mkLocTable(id, loc, locs, tabCtx, canDelete){
         <colgroup>
           <col style="width:18px">
           <col style="width:54px">
-          <col style="width:72px">
-          <col>
+          <col style="width:40%">
+          <col style="width:40%">
           <col style="width:22px">
         </colgroup>
         <thead><tr>
@@ -3429,8 +3435,8 @@ function mkRetTable(id, locs){
         <colgroup>
           <col style="width:18px">
           <col style="width:54px">
-          <col style="width:72px">
-          <col>
+          <col style="width:40%">
+          <col style="width:40%">
           <col style="width:22px">
         </colgroup>
         <thead><tr>
@@ -3607,7 +3613,11 @@ function rRet(){
     const dtd=document.createElement('td'); dtd.colSpan=11;
     const inner=document.createElement('div');
     inner.className='di'+(isOpen?' open':''); inner.id='di-ret-'+r.id;
-    if(isOpen)inner.innerHTML=bRetDetail(r,gs(r.id));
+    if(isOpen) {
+      inner.innerHTML=bRetDetail(r,gs(r.id));
+      const db = inner.querySelector('.db');
+      if (db) db.insertAdjacentHTML('afterbegin', `<button class="btn btn-n btn-sm" style="float:right;margin-bottom:8px" onclick="tRow('ret', ${r.id})">Collapse</button>`);
+    }
     dtd.appendChild(inner); dtr.appendChild(dtd); tbody.appendChild(dtr);
   });
   rPg('ret');
@@ -5162,6 +5172,35 @@ function escapeHtml(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
     '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
   }[c]));
+}
+
+
+function openDataToolsModal() {
+  showModal({
+    id: 'data-tools-modal',
+    title: 'Data & Backup Tools',
+    width: '600px',
+    body: `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <div>
+          <h3 style="font-size:15px;margin-bottom:12px;border-bottom:1px solid var(--border);padding-bottom:6px">Import Data</h3>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="btn btn-n" style="justify-content:flex-start" onclick="showUpModal(); document.getElementById('data-tools-modal').remove()">📂 Import Veeqo CSV</button>
+            <button class="btn btn-n" style="justify-content:flex-start" onclick="document.getElementById('inp-tracker').click(); document.getElementById('data-tools-modal').remove()">📂 Import Tracker XLSX</button>
+            <button class="btn btn-n" style="justify-content:flex-start;color:#7c3aed" onclick="document.getElementById('inp-pm').click(); document.getElementById('data-tools-modal').remove()">📋 Import Product Master</button>
+          </div>
+        </div>
+        <div>
+          <h3 style="font-size:15px;margin-bottom:12px;border-bottom:1px solid var(--border);padding-bottom:6px">Export & Backup</h3>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="btn btn-g" style="justify-content:flex-start" onclick="showExpModal(); document.getElementById('data-tools-modal').remove()">💾 Export Data</button>
+            <button class="btn btn-o" style="justify-content:flex-start" onclick="doSaveBackup(); document.getElementById('data-tools-modal').remove()">📋 Save Backup (Snapshots + File)</button>
+            <button class="btn btn-n" style="justify-content:flex-start" onclick="document.getElementById('inp-json').click(); document.getElementById('data-tools-modal').remove()">📂 Load Backup from File</button>
+          </div>
+        </div>
+      </div>
+    `
+  });
 }
 
 // ── F2: Backup Layers ──
