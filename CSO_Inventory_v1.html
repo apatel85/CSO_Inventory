@@ -67,38 +67,146 @@ body, button, input, select, textarea {
 #offline-banner { background:var(--amber); color:#fff; padding:7px 16px; font-size:12px; font-weight:600; display:flex; align-items:center; gap:8px; flex-shrink:0; }
 #offline-banner.hidden { display:none !important; }
 
-/* ── Header Overrides ── */
-.hdr { height:52px; padding:0 14px; }
-.hdr h1 { font-size:var(--text-md); font-weight:700; letter-spacing:-.2px; }
-.hdr .sub { font-size:var(--text-xs); }
-.hdr-brand { display:flex; flex-direction:column; flex:1; min-width:0; }
 
-/* ── Dark mode toggle ── */
-.theme-toggle { width:32px; height:32px; border-radius:8px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.15); color:#fff; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; font-size:15px; transition:background .15s; flex-shrink:0; }
-.theme-toggle:hover { background:rgba(255,255,255,.2); }
-
-/* ── Status dot improvements ── */
-.sdot { width:8px; height:8px; border-radius:50%; flex-shrink:0; transition:background .3s; background:#94a3b8; }
-.sdot.ok { background:#22c55e; box-shadow:0 0 0 3px rgba(34,197,94,.2); }
-.sdot.saving { background:#f59e0b; animation:pulse-dot 1s infinite; }
-.sdot.err { background:#ef4444; }
-@keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:.35} }
-.slbl { font-size:var(--text-xs); color:rgba(255,255,255,.5); white-space:nowrap; }
-
-/* ── Main Tabs Overrides ── */
-.main-tabs { background:var(--navy-dk); border-bottom:none; padding:0 12px; gap:2px; }
-.mtab {
-  height:36px; line-height:36px; padding:0 20px;
-  font-size:12px; font-weight:600; color:rgba(255,255,255,.60);
-  border-radius:10px 10px 0 0; cursor:pointer; white-space:nowrap;
-  flex-shrink:0; transition:all .15s; user-select:none; margin-top:8px;
+/* ── App Shell / Blueprint Layout ── */
+#topbar {
+  height:          58px;
+  background:      var(--surface);
+  border-bottom:   1px solid var(--border);
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  padding:         0 20px;
+  position:        sticky;
+  top:             0;
+  z-index:         100;
+  gap:             12px;
 }
-.mtab:hover { color:#fff; background:rgba(255,255,255,.12); }
-.mtab.active { color:var(--blue) !important; background:#fff; font-weight:700; margin-top:5px; height:39px; line-height:39px; box-shadow:0 -2px 0 var(--teal) inset; }
-.mtab-admin { color:var(--teal-lt) !important; margin-left:auto; border-left:1px solid rgba(255,255,255,.1); padding-left:16px; }
-.mtab-admin.active { color:var(--blue) !important; background:#fff !important; }
+.topbar-left  { display: flex; align-items: center; gap: 10px; }
+.topbar-right { display: flex; align-items: center; gap: 4px; }
+
+.app-brand    { display: flex; align-items: center; gap: 10px; }
+.app-name     { font-size: 16px; font-weight: 700; color: var(--text); }
+
+/* I3: Auto-save dot + text */
+.save-status  { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 5px; }
+.save-dot     { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+.save-dot.saving  { background: var(--warning); animation: pulse 1s infinite; }
+.save-dot.saved   { background: var(--success); }
+.save-dot.error   { background: var(--danger); }
+@keyframes pulse  { 0%,100% { opacity:1; } 50% { opacity:.4; } }
+
+#app {
+  display:   flex;
+  height:    calc(100vh - 58px);
+  overflow:  hidden;
+}
+
+/* ── Sidebar ── */
+#sidebar {
+  width:        220px;
+  flex-shrink:  0;
+  background:   var(--surface);
+  border-right: 1px solid var(--border);
+  overflow-y:   auto;
+  padding:      12px 0;
+  transition:   transform .25s;
+}
+
+.nav-section  { margin-bottom: 4px; }
+.nav-label    { font-size: 10px; font-weight: 700; text-transform: uppercase;
+                letter-spacing: .10em; color: var(--muted); padding: 14px 16px 5px; }
+.nav-item     { display: flex; align-items: center; gap: 10px; padding: 9px 16px;
+                margin: 1px 8px; border-radius: var(--radius-sm); color: var(--muted);
+                cursor: pointer; font-size: 14px; transition: all .12s; user-select: none; }
+.nav-item:hover  { background: var(--surface2); color: var(--text); }
+.nav-item.active { background: var(--primary-dim); color: var(--primary); font-weight: 600; }
+.nav-item .nav-icon { width: 18px; text-align: center; flex-shrink: 0; }
+.nav-item .nav-badge { margin-left: auto; background: var(--primary); color: #000;
+                       font-size: 10px; font-weight: 700; border-radius: 10px; padding: 1px 6px; }
+.nav-danger { color: var(--danger) !important; }
+.nav-danger:hover { background: rgba(231,76,60,.10) !important; }
+
+/* ── Main Content ── */
+#main {
+  flex:       1;
+  overflow-y: auto;
+  padding:    28px 32px;
+}
+
+.view { display: none; }
+.view.active { display: block; }
+
+/* Standard view page header */
+.view-header         { margin-bottom: 24px; }
+.view-header-row     { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.view-actions        { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ── Bottom tab bar (mobile only) ── */
+#bottombar {
+  display:     none;
+  position:    fixed;
+  bottom:      0;
+  left:        0;
+  right:       0;
+  background:  var(--surface);
+  border-top:  1px solid var(--border);
+  z-index:     100;
+  /* safe-area-inset for notch phones */
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+#bottombar button {
+  flex:            1;
+  padding:         10px 0 6px;
+  background:      none;
+  border:          none;
+  color:           var(--muted);
+  font-size:       10px;
+  display:         flex;
+  flex-direction:  column;
+  align-items:     center;
+  gap:             3px;
+  transition:      color .12s;
+}
+#bottombar button .tab-icon  { font-size: 20px; line-height: 1; }
+#bottombar button.active      { color: var(--primary); }
+/* FAB center button */
+#bottombar button.tab-fab    { color: var(--primary); }
+#bottombar button.tab-fab .tab-icon {
+  background:    var(--primary);
+  color:         #000;
+  border-radius: 50%;
+  width:         40px;
+  height:        40px;
+  display:       flex;
+  align-items:   center;
+  justify-content: center;
+  font-size:     22px;
+  font-weight:   700;
+  box-shadow:    0 2px 10px rgba(14,207,190,.4);
+}
+
+/* ── Responsive breakpoints ── */
+@media (max-width: 640px) {
+  #sidebar   { display: none; position: fixed; top: 58px; bottom: 0; left: 0;
+               z-index: 150; transform: translateX(-100%); }
+  #sidebar.open { display: block; transform: translateX(0); }
+  #main      { padding: 16px; padding-bottom: calc(72px + env(safe-area-inset-bottom, 0)); }
+  #bottombar { display: flex; }
+  #app       { height: calc(100vh - 58px); }
+  .mobile-only { display: flex !important; }
+  .desktop-only { display: none !important; }
+}
+@media (min-width: 641px) {
+  .mobile-only  { display: none !important; }
+  .desktop-only { display: flex !important; }
+}
+@media (max-width: 900px) {
+  #main { padding: 20px 20px; }
+}
 
 /* ── Buttons ── */
+
 .btn { display:inline-flex; align-items:center; justify-content:center; gap:5px; border-radius:var(--r); font-family:inherit; font-weight:600; cursor:pointer; transition:all .15s; white-space:nowrap; border:1px solid transparent; user-select:none; }
 .btn:active { transform:scale(.97); }
 .btn-sm { height:34px; padding:0 10px; font-size:11px; }
@@ -962,6 +1070,12 @@ tr.drow.ret-row>td{background:var(--lpurple)!important}
 .cso-dbg-export-btn:hover{background:#15803d}
 .cso-dbg-export-btn:disabled{opacity:.45;cursor:not-allowed}
 
+
+#help-drawer   { position: fixed; inset: 0; z-index: 1000000; display: none; }
+#help-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.5); }
+#help-panel    { position: absolute; right: 0; top: 0; bottom: 0; width: min(400px, 95vw); background: var(--surface); border-left: 1px solid var(--border); overflow-y: auto; animation: slideInRight .2s ease; }
+.help-header   { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--surface); z-index: 1; }
+@keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
 </style>
 </head>
 <body>
@@ -1110,29 +1224,66 @@ tr.drow.ret-row>td{background:var(--lpurple)!important}
 
 
 <a href="#main-content" class="skip-link">Skip to content</a>
-<header class="hdr" role="banner">
-  <div class="hdr-brand">
-    <h1>Cricket Store Online — Inventory Tracker</h1>
-    <div class="sub" id="hdr-sub"></div>
+<!-- ═══════════════════ HEADER ═══════════════════ -->
+<header id="topbar">
+  <div class="topbar-left">
+    <button id="sidebar-toggle" class="icon-btn mobile-only" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+    <div class="app-brand">
+      <span class="app-name">Cricket Store Online — Inventory Tracker</span>
+    </div>
   </div>
-  <div class="hdr-r" style="display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0">
-    <span class="sdot" id="sdot" role="status" aria-label="Sync status"></span>
-    <span class="slbl" id="slbl" aria-live="polite">Ready</span>
-    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode">🌙</button>
+  <div class="topbar-right">
+    <span id="save-status" class="save-status" aria-live="polite">
+      <span class="sdot" id="sdot" role="status" aria-label="Sync status"></span>
+      <span class="slbl" id="slbl" aria-live="polite">Ready</span>
+    </span>
+    <button class="icon-btn mobile-only" onclick="toggleMobileSearch()" aria-label="Search">🔍</button>
+    <button class="icon-btn" onclick="openHelp()" aria-label="Help">❓</button>
+    <button id="theme-toggle" class="icon-btn" onclick="toggleTheme()" aria-label="Toggle theme">☀️</button>
+    <div id="user-menu">
+      <div id="hdr-user-badge" onclick="authShowUserMenu(event)">
+        <div class="avatar" id="hdr-avatar">U</div>
+        <span id="hdr-uname">User</span>
+      </div>
+    </div>
   </div>
 </header>
 
-<div id="offline-banner" class="hidden" role="alert" aria-live="assertive">📶 You're offline — showing cached data</div>
-<nav class="main-tabs" role="tablist" aria-label="App sections">
-  <div class="mtab active" id="mt-recon" onclick="goTab('recon')" role="tab">📦 Inventory Reconcile</div>
-  <div class="mtab" id="mt-pick"  onclick="goTab('pick')"  role="tab">🛒 Order Picking</div>
-  <div class="mtab" id="mt-ret"   onclick="goTab('ret')"   role="tab">↩ Returns</div>
-  <div class="mtab" id="mt-log"   onclick="goTab('log')"   role="tab">📋 Activity Log</div>
-  <div class="mtab mtab-admin" id="mt-admin" onclick="goTab('admin')" role="tab" style="display:none">⚙️ Admin</div>
-</nav>
+<!-- ═══════════════════ APP BODY ═══════════════════ -->
+<div id="app">
+
+  <!-- Sidebar navigation (desktop) -->
+  <nav id="sidebar" aria-label="Main navigation">
+    <div class="nav-section">
+      <div class="nav-label">Views</div>
+      <div class="nav-item active" id="mt-recon" onclick="goTab('recon')">
+        <span class="nav-icon">📦</span><span>Inventory Reconcile</span>
+      </div>
+      <div class="nav-item" id="mt-pick" onclick="goTab('pick')">
+        <span class="nav-icon">🛒</span><span>Order Picking</span>
+      </div>
+      <div class="nav-item" id="mt-ret" onclick="goTab('ret')">
+        <span class="nav-icon">↩</span><span>Returns</span>
+      </div>
+      <div class="nav-item" id="mt-log" onclick="goTab('log')">
+        <span class="nav-icon">📋</span><span>Activity Log</span>
+      </div>
+    </div>
+    <div class="nav-section" id="mt-admin" style="display:none">
+      <div class="nav-label">Management</div>
+      <div class="nav-item nav-danger" onclick="goTab('admin')">
+        <span class="nav-icon">⚙️</span><span>Admin</span>
+      </div>
+    </div>
+  </nav>
+
+  <div id="sidebar-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:149" onclick="closeSidebar()"></div>
+
+  <!-- Main content -->
+  <main id="main" role="main">
 
 
-<main id="main-content" tabindex="-1">
+
 <div class="toolbar">
   <div class="tb-row tb-row1">
     <button class="btn btn-n btn-sm" onclick="showUpModal()">📂 <span class="tb-lbl">Veeqo CSV</span></button>
@@ -1183,7 +1334,7 @@ tr.drow.ret-row>td{background:var(--lpurple)!important}
         <div class="ms-dd" id="ms-recon-st-dd"><div class="ms-list" id="ms-recon-st-opts"></div><div class="ms-ft"><span id="ms-recon-st-cnt"></span><button class="ms-clr" onclick="clrMs('recon-st');event.stopPropagation()">Clear</button></div></div>
       </div>
     </div>
-    <div class="fg"><label>Search</label><input type="text" id="recon-srch" aria-label="Search inventory" placeholder="Title, SKU, variant…" oninput="applyRecon()"></div>
+    <div class="fg"><label>Search</label><input type="text" id="recon-srch" aria-label="Search inventory" placeholder="Title, SKU, variant…" oninput="onSearch(this.value, applyRecon)"></div>
     <div class="fr"><button class="btn btn-o btn-sm" onclick="clrRecon()">Clear</button><span class="fcount" id="recon-fcount"></span></div>
   </div>
 </div>
@@ -1237,7 +1388,7 @@ tr.drow.ret-row>td{background:var(--lpurple)!important}
         <div class="ms-dd" id="ms-pick-cat-dd"><div class="ms-list" id="ms-pick-cat-opts"></div><div class="ms-ft"><span id="ms-pick-cat-cnt"></span><button class="ms-clr" onclick="clrMs('pick-cat');event.stopPropagation()">Clear</button></div></div>
       </div>
     </div>
-    <div class="fg"><label>Search</label><input type="text" id="pick-srch" aria-label="Search order picking" placeholder="Title or SKU…" oninput="applyPick()"></div>
+    <div class="fg"><label>Search</label><input type="text" id="pick-srch" aria-label="Search order picking" placeholder="Title or SKU…" oninput="onSearch(this.value, applyPick)"></div>
     <div class="fr"><button class="btn btn-o btn-sm" onclick="clrPick()">Clear</button><span class="fcount" id="pick-fcount"></span></div>
   </div>
 </div>
@@ -1275,7 +1426,7 @@ tr.drow.ret-row>td{background:var(--lpurple)!important}
         <div class="ms-dd" id="ms-ret-cat-dd"><div class="ms-list" id="ms-ret-cat-opts"></div><div class="ms-ft"><span id="ms-ret-cat-cnt"></span><button class="ms-clr" onclick="clrMs('ret-cat');event.stopPropagation()">Clear</button></div></div>
       </div>
     </div>
-    <div class="fg"><label>Search</label><input type="text" id="ret-srch" aria-label="Search returns" placeholder="Title or SKU…" oninput="applyRet()"></div>
+    <div class="fg"><label>Search</label><input type="text" id="ret-srch" aria-label="Search returns" placeholder="Title or SKU…" oninput="onSearch(this.value, applyRet)"></div>
     <div class="fr"><button class="btn btn-o btn-sm" onclick="clrRet()">Clear</button><span class="fcount" id="ret-fcount"></span></div>
   </div>
 </div>
@@ -2161,6 +2312,7 @@ function updateGridCols(){
 window.addEventListener('resize',updateGridCols);
 
 function doSaveBackup(){
+  linkBackupFile();
   // Save JSON + update savedSnapshot
   saveJson();
   savedSnapshot = {st:JSON.parse(JSON.stringify(st)), prodLog:JSON.parse(JSON.stringify(prodLog))};
@@ -2192,7 +2344,7 @@ function showRestoreModal(){
   document.body.appendChild(overlay);
 }
 async function doRestoreDevice(){
-  loadLS();
+  await loadLS();
   openId={recon:null,pick:null,ret:null};
   applyRecon(); applyPick(); applyRet();
   document.getElementById('restore-overlay')?.remove();
@@ -2264,6 +2416,10 @@ function mergeLocalStorage(){
 }
 
 async function init(){
+  try{ await loadBackupFileHandle(); }catch(e){}
+  try { await initDB(); } catch(e) { console.warn("IndexedDB unavailable"); }
+  try { await initDB(); } catch(e) { console.warn('IndexedDB unavailable', e); }
+  if (typeof buildBottomNav === "function") buildBottomNav();
   injectPWA();
   loadUser();
   seedInit();
@@ -2281,7 +2437,7 @@ async function init(){
     MASTER.forEach((r,i)=>{if(r.id===undefined||r.id===null)r.id=i;});
     try{const sn=localStorage.getItem('cso4_snap');if(sn)savedSnapshot=JSON.parse(sn);}catch(e){}
     try{const ll=localStorage.getItem('cso4_lastloaded');if(ll)lastLoadedSnapshot=JSON.parse(ll);}catch(e){}
-    loadLS();
+    await loadLS();
   }
   buildMS();
   applyRecon(); applyPick(); applyRet();
@@ -2300,7 +2456,19 @@ async function init(){
   },300);
 }
 
-function loadLS(){
+async function loadLS(){
+  if (db) {
+    try {
+      const dbState = await dbGet('cso_state');
+      if (dbState) {
+        st = dbState.st || {};
+        actLog = dbState.actLog || [];
+        vDates = dbState.vDates || {};
+        prodLog = dbState.prodLog || [];
+        return;
+      }
+    } catch(e) { console.warn("IndexedDB load error", e); }
+  }
   try{const s=localStorage.getItem('cso4_st');  if(s)st=JSON.parse(s);}catch(e){}
   try{const l=localStorage.getItem('cso4_log'); if(l)actLog=JSON.parse(l);}catch(e){}
   try{const d=localStorage.getItem('cso4_vd');  if(d)vDates=JSON.parse(d);}catch(e){}
@@ -2399,6 +2567,10 @@ function saveLS(){
   if(dot)dot.classList.add('dirty'); dirty=true;
   clearTimeout(saveT);
   saveT=setTimeout(async()=>{
+    // IndexedDB backup logic
+    if (db) {
+       await dbPut({id: 'cso_state', st, actLog, vDates, prodLog, ts: Date.now()});
+    }
     try{
       localStorage.setItem('cso4_st',JSON.stringify(st));
       localStorage.setItem('cso4_log',JSON.stringify(actLog));
@@ -2544,17 +2716,58 @@ function exportLog(){
 function goTab(tab){
   const prevTab=curTab;
   curTab=tab;
+
+  // Desktop sidebar nav
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.classList.toggle('active', el.id === 'mt-'+tab);
+  });
+
+  // Mobile bottombar nav
+  document.querySelectorAll('#bottombar button').forEach(el => {
+    el.classList.toggle('active', el.dataset.view === tab);
+  });
+
+  // Toggle views
   ['recon','pick','ret','log','admin'].forEach(t=>{
-    const mt=document.getElementById('mt-'+t);
     const ta=document.getElementById('ta-'+t);
-    if(mt) mt.classList.toggle('active',t===tab);
     if(ta) ta.style.display=t===tab?'':'none';
   });
+
   if(tab==='log')rLog();
   if(tab==='admin'){ admLoadUsers(); admLoadActivity(); }
   if(tab!==prevTab){
-    const tabNames={recon:'Inventory Reconcile',pick:'Order Picking',ret:'Returns',log:'Activity Log'};
+    const main = document.getElementById('main');
+    if(main) main.scrollTop = 0;
   }
+}
+
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  const isOpen = sidebar.classList.contains('open');
+  sidebar.classList.toggle('open', !isOpen);
+  overlay.style.display = isOpen ? 'none' : 'block';
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').style.display = 'none';
+}
+
+function buildBottomNav() {
+  const bar = document.getElementById('bottombar');
+  if (!bar) return;
+  const tabs = [
+    { view: 'recon', icon: '📦', label: 'Recon' },
+    { view: 'pick', icon: '🛒', label: 'Pick' },
+    { view: 'ret', icon: '↩', label: 'Returns' },
+    { view: 'log', icon: '📋', label: 'Log' }
+  ];
+  bar.innerHTML = tabs.map(tab => `
+    <button data-view="${tab.view}" onclick="goTab('${tab.view}')" class="${curTab===tab.view?'active':''}">
+      <span class="tab-icon">${tab.icon}</span>
+      <span>${tab.label}</span>
+    </button>`).join('');
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -3902,6 +4115,9 @@ function doReset(){
 // MODALS
 let _cCb=null;
 function showConf(tit,bod,onOk,okLbl,okC='var(--navy)'){
+  showConfirm(tit, bod, onOk);
+  return;
+//
   _cCb=onOk; document.getElementById('cm-tit').textContent=tit; document.getElementById('cm-bod').innerHTML=bod;
   const b=document.getElementById('cm-ok'); b.textContent=okLbl||'Confirm'; b.style.background=okC; b.style.borderColor=okC;
   b.onclick=()=>{cConf();if(_cCb)_cCb();}; document.getElementById('conf-modal').classList.add('show');
@@ -3925,7 +4141,7 @@ document.addEventListener('click',e=>{
 });
 
 // TOAST
-function toast(msg, type, duration) {
+function toastLegacy2(msg, type, duration) {
   type = type || 'default'; duration = duration || 3000;
   const container = document.getElementById('toast');
   if (!container) return;
@@ -4338,7 +4554,10 @@ if (document.readyState === 'loading') {
   bootApp();
 }
 </script>
-</main>
+  </main>
+</div><!-- /#app -->
+
+<nav id="bottombar" aria-label="Tab bar"></nav>
 
 <!-- ════════════════════ DEBUG MODE ════════════════════ -->
 <div id="cso-dbg-bar" class="cso-dbg-bar">🐛 DEBUG — Tap any element to flag an issue &nbsp;|&nbsp; <span id="cso-dbg-bar-count">0 flagged</span></div>
@@ -4637,7 +4856,541 @@ if (document.readyState === 'loading') {
   });
 
 })();
+
+// ── I1: IndexedDB Integration ──
+const DB_NAME    = 'CSO_Inventory_DB';   // e.g. 'TaskManagerDB'
+const DB_VERSION = 1;
+const STORE_NAME = 'cso_records';            // e.g. 'tasks', 'contacts', 'items'
+
+// Add an index for every field you filter or sort by in queries
+// Format: { name: 'indexName', keyPath: 'fieldName' }
+const DB_INDEXES = [
+  // Examples — uncomment what you need:
+  // { name: 'date',     keyPath: 'date'     },
+  // { name: 'status',   keyPath: 'status'   },
+  // { name: 'category', keyPath: 'category' },
+];
+// ─────────────────────────────────────────────────────────────────────────
+
+let db = null;
+
+async function initDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = e => {
+      const d = e.target.result;
+      if (!d.objectStoreNames.contains(STORE_NAME)) {
+        const store = d.createObjectStore(STORE_NAME, { keyPath: 'id' });
+        DB_INDEXES.forEach(i => store.createIndex(i.name, i.keyPath, { unique: false }));
+      }
+    };
+    req.onsuccess = e => { db = e.target.result; resolve(db); };
+    req.onerror   = () => {
+      // NEVER fail silently — always show a visible error to the user
+      document.body.innerHTML = `
+        <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;
+          font-family:sans-serif;background:#0f1117;color:#e8eaf0;text-align:center;padding:40px">
+          <div>
+            <div style="font-size:48px;margin-bottom:16px">⚠️</div>
+            <h2>Storage Unavailable</h2>
+            <p style="color:#6b7394;margin-top:8px">
+              This app requires browser storage.<br>
+              Try Chrome or Edge, and disable private/incognito mode.
+            </p>
+          </div>
+        </div>`;
+      reject(req.error);
+    };
+  });
+}
+
+// ── CRUD ─────────────────────────────────────────────────────────────────
+
+function dbPut(record) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    tx.objectStore(STORE_NAME).put(record).onsuccess = () => resolve();
+    tx.onerror = e => reject(e.target.error);
+  });
+}
+
+function dbGet(id) {
+  return new Promise((resolve, reject) => {
+    const tx  = db.transaction(STORE_NAME, 'readonly');
+    const req = tx.objectStore(STORE_NAME).get(id);
+    req.onsuccess = () => resolve(req.result);
+    tx.onerror    = e => reject(e.target.error);
+  });
+}
+
+function dbDelete(id) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    tx.objectStore(STORE_NAME).delete(id).onsuccess = () => resolve();
+    tx.onerror = e => reject(e.target.error);
+  });
+}
+
+function dbGetAll() {
+  return new Promise((resolve, reject) => {
+    const tx  = db.transaction(STORE_NAME, 'readonly');
+    const req = tx.objectStore(STORE_NAME).getAll();
+    req.onsuccess = () => resolve(req.result || []);
+    tx.onerror    = e => reject(e.target.error);
+  });
+}
+
+function dbBulkPut(records, onProgress) {
+  return new Promise((resolve, reject) => {
+    if (!records.length) { resolve(); return; }
+    const tx    = db.transaction(STORE_NAME, 'readwrite');
+    const store = tx.objectStore(STORE_NAME);
+    let done    = 0;
+    records.forEach(r => {
+      const req = store.put(r);
+      req.onsuccess = () => { done++; if (onProgress) onProgress(done, records.length); if (done === records.length) resolve(); };
+    });
+    tx.onerror = e => reject(e.target.error);
+  });
+}
+
+function dbClear() {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    tx.objectStore(STORE_NAME).clear().onsuccess = () => resolve();
+    tx.onerror = e => reject(e.target.error);
+  });
+}
+
+function dbCount() {
+  return new Promise((resolve, reject) => {
+    const tx  = db.transaction(STORE_NAME, 'readonly');
+    const req = tx.objectStore(STORE_NAME).count();
+    req.onsuccess = () => resolve(req.result);
+    tx.onerror    = e => reject(e.target.error);
+  });
+}
+
+// Unique ID — always use this, never sequential counters
+function newId() { return Date.now() + Math.random(); }
+
+// Advanced in-memory query (filter, sort, paginate after dbGetAll)
+async function dbQuery({
+  search   = '',
+  filters  = {},       // e.g. { status: 'active', category: 'Work' }
+  sort     = 'id',
+  dir      = 'desc',
+  page     = 1,
+  pageSize = 25
+} = {}) {
+  let rows = await dbGetAll();
+
+  // Exact-match filters
+  Object.entries(filters).forEach(([key, val]) => {
+    if (val !== '' && val != null) rows = rows.filter(r => String(r[key]) === String(val));
+  });
+
+  // Full-text search across SEARCH_FIELDS (configure this for your app)
+  if (search.trim()) {
+    const q = search.trim().toLowerCase();
+    rows = rows.filter(r =>
+      SEARCH_FIELDS.some(f => String(r[f] ?? '').toLowerCase().includes(q))
+    );
+  }
+
+  // Sort (handles strings and numbers)
+  rows.sort((a, b) => {
+    let av = a[sort] ?? '', bv = b[sort] ?? '';
+    if (!isNaN(+av) && !isNaN(+bv)) { av = +av; bv = +bv; }
+    if (av < bv) return dir === 'asc' ? -1 : 1;
+    if (av > bv) return dir === 'asc' ?  1 : -1;
+    return 0;
+  });
+
+  const total = rows.length;
+  const start = (page - 1) * pageSize;
+  return { rows: rows.slice(start, start + pageSize), total };
+}
+
+// ── S3: Modal System ──
+function showModal({ id, title, body, actions, width = '480px' }) {
+  const existing = document.getElementById(id);
+  if (existing) existing.remove();
+  const modal = document.createElement('div');
+  modal.id = id;
+  modal.style.cssText = `position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:999999;display:flex;align-items:center;justify-content:center;padding:16px`;
+  modal.innerHTML = `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);width:min(${width},100%);max-height:90vh;overflow-y:auto;padding:28px;box-shadow:var(--shadow)">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px">
+        <h2 style="font-size:18px;font-weight:700">${escapeHtml(title)}</h2>
+        <button class="icon-btn" onclick="document.getElementById('${id}').remove()">✕</button>
+      </div>
+      <div id="${id}-body">${body}</div>
+      ${actions ? `<div style="display:flex;gap:8px;margin-top:24px;justify-content:flex-end">${actions}</div>` : ''}
+    </div>`;
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  document.getElementById('modal-root').appendChild(modal);
+  return modal;
+}
+function showConfirm(title, message, onConfirm) {
+  const existing = document.getElementById('confirm-modal');
+  if (existing) existing.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'confirm-modal';
+  modal.style.cssText = `position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:999999;display:flex;align-items:center;justify-content:center;padding:16px`;
+
+  modal.innerHTML = `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);width:min(480px,100%);max-height:90vh;overflow-y:auto;padding:28px;box-shadow:var(--shadow)">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px">
+        <h2 style="font-size:18px;font-weight:700">${escapeHtml(title)}</h2>
+        <button class="icon-btn" onclick="document.getElementById('confirm-modal').remove()">✕</button>
+      </div>
+      <div id="confirm-modal-body"><p style="color:var(--muted)">${escapeHtml(message)}</p></div>
+      <div style="display:flex;gap:8px;margin-top:24px;justify-content:flex-end">
+        <button class="btn btn-n" id="confirm-cancel">Cancel</button>
+        <button class="btn btn-r" id="confirm-ok">Confirm</button>
+      </div>
+    </div>`;
+
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  document.getElementById('modal-root').appendChild(modal);
+
+  document.getElementById('confirm-cancel').addEventListener('click', () => modal.remove());
+  document.getElementById('confirm-ok').addEventListener('click', () => {
+    modal.remove();
+    if(onConfirm) onConfirm();
+  });
+}
+function closeAllModals() {
+  document.querySelectorAll('[id$="-modal"]').forEach(m => m.remove());
+  closeHelp();
+}
+
+// ── S4: Toast ──
+function toast(msg, type = 'info', opts = {}) {
+  // Map legacy types
+  if(type==='ok') type='success';
+  if(type==='err') type='error';
+  if(type==='warn') type='warning';
+
+  const container = document.getElementById('toast');
+  if(!container) return;
+  const duration = (typeof opts === 'number') ? opts : (opts.duration || 3200);
+  const colors = {
+    success: 'background:var(--green);color:#fff',
+    error: 'background:var(--red);color:#fff',
+    warning: 'background:var(--amber);color:#000',
+    info: 'background:var(--navy);color:#fff'
+  };
+  const el = document.createElement('div');
+  el.className = 'toast-item show';
+  el.style.cssText = `padding:11px 18px;border-radius:8px;font-size:14px;cursor:pointer;box-shadow:var(--sh2);display:flex;align-items:center;gap:10px;margin-top:8px;${colors[type] || colors.info}`;
+  el.appendChild(document.createTextNode(msg));
+  el.addEventListener('click', () => el.remove());
+  container.appendChild(el);
+  setTimeout(() => {
+    el.classList.replace('show', 'hide');
+    setTimeout(() => el.remove(), 300);
+  }, duration);
+}
+
+// ── F4: Help System ──
+function openHelp() {
+  const drawer = document.getElementById('help-drawer');
+  const content = document.getElementById('help-content');
+  if (!drawer || !content) return;
+  content.innerHTML = `
+    <div style="padding:0 20px 20px">
+      <h3 style="font-size:15px;margin-bottom:14px">Keyboard Shortcuts</h3>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0"><span style="color:var(--muted)">Search</span><kbd style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:1px 7px;font-family:monospace;font-size:12px">/</kbd></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0"><span style="color:var(--muted)">Close dialogs</span><kbd style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:1px 7px;font-family:monospace;font-size:12px">Esc</kbd></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0"><span style="color:var(--muted)">Help</span><kbd style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:1px 7px;font-family:monospace;font-size:12px">?</kbd></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0"><span style="color:var(--muted)">Save Backup</span><kbd style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:1px 7px;font-family:monospace;font-size:12px">F2</kbd></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0"><span style="color:var(--muted)">Export</span><kbd style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:1px 7px;font-family:monospace;font-size:12px">F10</kbd></div>
+        <br>
+        <h4 style="font-size:14px;margin-bottom:8px">Navigation (Press 'g' then letter)</h4>
+        <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0"><span style="color:var(--muted)">Inventory Reconcile</span><kbd style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:1px 7px;font-family:monospace;font-size:12px">g r</kbd></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0"><span style="color:var(--muted)">Order Picking</span><kbd style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:1px 7px;font-family:monospace;font-size:12px">g p</kbd></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0"><span style="color:var(--muted)">Returns</span><kbd style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:1px 7px;font-family:monospace;font-size:12px">g t</kbd></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0"><span style="color:var(--muted)">Activity Log</span><kbd style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:1px 7px;font-family:monospace;font-size:12px">g l</kbd></div>
+      </div>
+    </div>`;
+  drawer.style.display = 'block';
+}
+function closeHelp() {
+  const drawer = document.getElementById('help-drawer');
+  if (drawer) drawer.style.display = 'none';
+}
+
+// ── F11: Keyboard Shortcuts ──
+let _gKeyActive = false;
+let _gTimer = null;
+document.addEventListener('keydown', e => {
+  if (['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) return;
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const key = e.key.toLowerCase();
+
+  if (e.key === 'Escape') { closeAllModals(); return; }
+
+  if (_gKeyActive) {
+    _gKeyActive = false;
+    clearTimeout(_gTimer);
+    if (key === 'r') goTab('recon');
+    if (key === 'p') goTab('pick');
+    if (key === 't') goTab('ret');
+    if (key === 'l') goTab('log');
+    return;
+  }
+  if (key === 'g') {
+    _gKeyActive = true;
+    _gTimer = setTimeout(() => { _gKeyActive = false; }, 1500);
+    return;
+  }
+  if (key === '/') {
+      e.preventDefault();
+      const s = document.getElementById(curTab+'-srch');
+      if (s) s.focus();
+  }
+  if (key === '?') { openHelp(); }
+  if (e.key === 'F2') { e.preventDefault(); doSaveBackup(); }
+  if (e.key === 'F10') { e.preventDefault(); showExpModal(); }
+});
+
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+  }[c]));
+}
+
+// ── F2: Backup Layers ──
+function showBackupMenu() {
+  const snaps = loadSnapshots();
+  const snapsHtml = snaps.length ? snaps.map(s => `
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+      <div style="flex:1">
+        <div style="font-size:13px">${new Date(s.ts).toLocaleString()}</div>
+        <div style="font-size:12px;color:var(--muted)">Records</div>
+      </div>
+      <button class="btn btn-sm btn-n" onclick="restoreSnapshot(${s.ts})">Restore</button>
+      <button class="btn btn-sm btn-n" onclick="downloadSnapshot(${s.ts})">↓</button>
+    </div>
+  `).join('') : '<p style="color:var(--muted);font-size:13px">No auto-snapshots available.</p>';
+
+  showModal({
+    id: 'backup-modal', title: 'Backup & Restore',
+    body: `
+      <div style="margin-bottom:20px;">
+        <h3 style="font-size:15px;margin-bottom:8px">Local File Restore</h3>
+        <button class="btn btn-o" onclick="document.getElementById('inp-json').click(); document.getElementById('backup-modal').remove()">📂 Select JSON File</button>
+      </div>
+      <div>
+        <h3 style="font-size:15px;margin-bottom:8px">Auto-Snapshots</h3>
+        <div id="snapshot-list">${snapsHtml}</div>
+      </div>
+    `
+  });
+}
+
+
+
+
+
+
+let _autoFileHandle = null;
+let _autoBackupTimer = null;
+
+function isFileSystemSupported() { return typeof window.showSaveFilePicker === 'function'; }
+
+async function linkBackupFile() {
+  if (!isFileSystemSupported()) {
+    toast('File backup requires Chrome, Edge, or Brave', 'warning'); return;
+  }
+  try {
+    _autoFileHandle = await window.showSaveFilePicker({
+      suggestedName: 'cso_inventory_backup.json',
+      types: [{ description: 'JSON backup', accept: { 'application/json': ['.json'] } }]
+    });
+    clearInterval(_autoBackupTimer);
+    _autoBackupTimer = setInterval(runFileBackup, 30 * 60 * 1000);
+    await runFileBackup();
+    if (db) await dbPut({ id: 'l2_file_handle', handle: _autoFileHandle });
+    toast(`Backup linked to ${_autoFileHandle.name}`, 'success');
+  } catch (e) {
+    if (e.name !== 'AbortError') toast('Could not link file', 'error');
+  }
+}
+
+async function runFileBackup() {
+  if (!_autoFileHandle) return;
+  try {
+    const all = { st, actLog, vDates, prodLog, ts: Date.now() };
+    const json = JSON.stringify({ records: all, backedUpAt: Date.now() }, null, 2);
+    const w = await _autoFileHandle.createWritable();
+    await w.write(json); await w.close();
+    const lbl=document.getElementById('slbl'); if(lbl) lbl.textContent='✓ File saved';
+  } catch (e) {
+    toast('File backup failed: ' + e.message, 'error');
+  }
+}
+
+// ── Layer 1: Browser Snapshots ──
+
+
+function scheduleSnapshot() {
+  clearTimeout(_snapTimer);
+  _snapTimer = setTimeout(takeSnapshot, 3000);
+}
+
+async function takeSnapshot() {
+  let snaps = loadSnapshots();
+  snaps.unshift({ ts: Date.now(), data: { st: JSON.parse(JSON.stringify(st)), prodLog: JSON.parse(JSON.stringify(prodLog)), actLog: JSON.parse(JSON.stringify(actLog)), vDates: JSON.parse(JSON.stringify(vDates)) } });
+  snaps = snaps.slice(0, MAX_SNAPSHOTS);
+  try { localStorage.setItem(SNAPSHOTS_KEY, JSON.stringify(snaps)); } catch (e) {}
+}
+
+function loadSnapshots() {
+  try { return JSON.parse(localStorage.getItem(SNAPSHOTS_KEY) || '[]'); }
+  catch { return []; }
+}
+
+function downloadSnapshot(ts) {
+  const snap = loadSnapshots().find(s => s.ts === ts);
+  if (!snap) { toast('Snapshot not found', 'error'); return; }
+  downloadFile(JSON.stringify(snap.data, null, 2), `snapshot_${ts}.json`, 'application/json');
+}
+
+async function restoreSnapshot(ts) {
+  const snap = loadSnapshots().find(s => s.ts === ts);
+  if (!snap) return;
+  showConfirm('Restore Snapshot', `Replace current state with snapshot from ${new Date(ts).toLocaleString()}?`, async () => {
+    st = snap.data.st;
+    prodLog = snap.data.prodLog;
+    actLog = snap.data.actLog;
+    vDates = snap.data.vDates;
+    saveLS();
+    goTab('recon');
+    toast('Restored from snapshot', 'success');
+  });
+}
+
+// ── Layer 3: Google Sheets Sync ──
+let gsheetsSheetId = localStorage.getItem('cso_gsheets_id') || null;
+let gsheetsToken = null;
+
+function linkGoogleSheets() {
+  toast('Google Sheets integration requires OAuth Setup. Using standard local layers.', 'warning');
+}
+
+async function pushToGoogleSheets() {
+  if (!gsheetsSheetId || !gsheetsToken) return;
+  console.log("Google Sheets sync skipped (no token).");
+}
+
+const SNAPSHOTS_KEY = 'cso_snapshots_v1';
+const MAX_SNAPSHOTS = 5;
+let   _snapTimer    = null;
+
+// Call this after EVERY data mutation
+function scheduleSnapshot() {
+  clearTimeout(_snapTimer);
+  _snapTimer = setTimeout(takeSnapshot, 3000); // 3s debounce
+}
+
+
+
+
+function downloadSnapshot(ts) {
+  const snap = loadSnapshots().find(s => s.ts === ts);
+  if (!snap) { toast('Snapshot not found', 'error'); return; }
+  downloadFile(JSON.stringify(snap.data, null, 2), `snapshot_${ts}.json`, 'application/json');
+}
+
+function loadSnapshots() {
+  try { return JSON.parse(localStorage.getItem(SNAPSHOTS_KEY) || '[]'); }
+  catch { return []; }
+}
+
+
+async function loadBackupFileHandle() {
+  if (db) {
+    try {
+      const rec = await dbGet('l2_file_handle');
+      if (rec && rec.handle) {
+         // Verify permission
+         if ((await rec.handle.queryPermission({mode:'readwrite'})) === 'granted') {
+             _autoFileHandle = rec.handle;
+             _autoBackupTimer = setInterval(runFileBackup, 30 * 60 * 1000);
+         }
+      }
+    } catch(e) {}
+  }
+}
+
+
+async function runFileBackup() {
+  if (!_autoFileHandle) return;
+  try {
+    const all  = await dbGetAll();
+    const json = JSON.stringify({ records: all, backedUpAt: Date.now() }, null, 2);
+    const w    = await _autoFileHandle.createWritable();
+    await w.write(json); await w.close();
+    const lbl=document.getElementById('slbl'); if(lbl) lbl.textContent='✓ File saved';
+  } catch (e) {
+    toast('File backup failed: ' + e.message, 'error');
+  }
+}
+
+// Fire immediately when user hides tab
+
+
+// ── F10: Standard File Downloader ──
+function downloadFile(content, filename, type) {
+  const blob = new Blob([content], { type });
+  const url  = URL.createObjectURL(blob);
+  const a    = Object.assign(document.createElement('a'), { href: url, download: filename });
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && _autoFileHandle) runFileBackup();
+});
+
+// ── F3: Debounced Search ──
+let _searchTimer = null;
+function onSearch(value, renderFn) {
+  clearTimeout(_searchTimer);
+  _searchTimer = setTimeout(() => {
+    // legacy functions rely on the input value directly, so we just call renderFn
+    if(typeof renderFn === 'function') renderFn();
+  }, 250);
+}
+
 </script>
+
+
+<!-- S3: Modal container -->
+<div id="modal-root"></div>
+
+<!-- S4: Toast container -->
+<div id="toast" role="status" aria-live="polite" aria-atomic="false"></div>
+
+<!-- F4: Help drawer -->
+<div id="help-drawer" style="display:none">
+  <div id="help-backdrop"  onclick="closeHelp()"></div>
+  <div id="help-panel">
+    <div class="help-header">
+      <h2>Help & Navigation</h2>
+      <button class="icon-btn" onclick="closeHelp()">✕</button>
+    </div>
+    <div id="help-content"></div>
+  </div>
+</div>
 
 </body>
 </html>
